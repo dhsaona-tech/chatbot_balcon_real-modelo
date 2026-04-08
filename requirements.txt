@@ -1,0 +1,6 @@
+transformers
+torch
+pyTelegramBotAPI
+firebase-admin
+huggingface_hub
+pandas
