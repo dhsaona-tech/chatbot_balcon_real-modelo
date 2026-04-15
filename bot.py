@@ -205,7 +205,7 @@ def orquestador_inteligente(mensaje_usuario, user_id):
             if depto_nuevo: estado['depto'] = depto_nuevo
             if torre_nueva: estado['torre'] = torre_nueva
             if estado['torre'] and estado['depto']:
-                respuesta = consultar_saldo_excel(estado['torre'], estado['depto'])
+                respuesta = consultar_saldo_firebase(estado['torre'], estado['depto'])
                 MEMORIA_CONTEXTO[user_id] = None
                 return respuesta
             elif estado['depto'] and not estado['torre']:
@@ -227,7 +227,7 @@ def orquestador_inteligente(mensaje_usuario, user_id):
             if torre_nueva: estado['torre'] = torre_nueva
             if depto_nuevo: estado['depto'] = depto_nuevo
             if estado['torre'] and estado['depto']:
-                respuesta = consultar_saldo_excel(estado['torre'], estado['depto'])
+                respuesta = consultar_saldo_firebase(estado['torre'], estado['depto'])
                 MEMORIA_CONTEXTO[user_id] = None
                 return respuesta
             else:
@@ -325,7 +325,7 @@ def orquestador_inteligente(mensaje_usuario, user_id):
     elif intencion == "consulta_saldo":
         torre, depto = extraer_torre_depto(mensaje_usuario)
         if torre and depto:
-            return consultar_saldo_excel(torre, depto)
+            return consultar_saldo_firebase(torre, depto)
         elif depto:
             MEMORIA_CONTEXTO[user_id] = {'estado': 'esperando_torre', 'torre': None, 'depto': depto}
             return f"🤖 Departamento {depto}, entendido. ¿De qué torre? (1 al 6)"
