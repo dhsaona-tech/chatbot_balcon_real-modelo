@@ -108,12 +108,32 @@ def extraer_torre_depto(texto):
     return torre, depto
 
 # ══════════════════════════════════════════════════════
-# 4. CONSULTA DE SALDO (SIN EXCEL EN RAILWAY)
+# 4. CONSULTA DE SALDO 
 # Protección de datos: NO muestra nombre del propietario
 # ══════════════════════════════════════════════════════
-def consultar_saldo_excel(torre, depto):
-    return (f"🏠 Torre {torre}, Departamento {depto}\n"
-            f"📋 Su consulta ha sido registrada. La administración le proporcionará su estado de cuenta.")
+def consultar_saldo_firebase(torre, depto):
+    """Consulta el saldo en Firebase. NO muestra nombre del propietario."""
+    if not FIREBASE_ENABLED:
+        return (f"🏠 Torre {torre}, Departamento {depto}\n"
+                f"📋 Su consulta ha sido registrada. La administración le proporcionará su estado de cuenta.")
+    try:
+        doc_id = f"T{torre}_{depto.upper()}"
+        doc = db.collection('saldos').document(doc_id).get()
+        if doc.exists:
+            saldo = doc.to_dict().get('saldo', 0)
+            if saldo < -0.50:
+                return (f"🏠 Torre {torre}, Departamento {depto}\n"
+                        f"💰 Saldo pendiente: ${abs(saldo):.2f}\n"
+                        f"Le recordamos que puede acercarse a la administración para regularizar su situación.")
+            else:
+                return (f"🏠 Torre {torre}, Departamento {depto}\n"
+                        f"✅ Se encuentra al día con sus obligaciones.")
+        else:
+            return f"🏠 No encontré registros para Torre {torre}, Depto {depto}. ¿Podría verificar los datos?"
+    except Exception as e:
+        print(f"Error consultando saldo: {e}")
+        return (f"🏠 Torre {torre}, Departamento {depto}\n"
+                f"📋 Su consulta ha sido registrada. La administración le proporcionará su estado de cuenta.")
 
 # ══════════════════════════════════════════════════════
 # 5. ORQUESTADOR v5
